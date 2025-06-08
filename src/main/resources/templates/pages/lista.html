@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Usuarios Registrados</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/styleTab.css}">
+</head>
+<body class="bg-gray-100">
+
+<!-- Barra -->
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="#" class="navbar-logo">📘 Biblioteca Virtual</a>
+        <ul class="navbar-links">
+            <li><a th:href="@{/index}">Inicio</a></li>
+            <li><a th:href="@{/catalogo}">Catálogo</a></li>
+            <li><a th:href="@{/registro}">Registro</a></li>
+            <li><a th:href="@{/login}">Login</a></li>
+        </ul>
+    </div>
+</nav>
+<main class="table-wrapper">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-6xl">
+        <h2 class="text-3xl font-bold mb-6 text-center text-sky-700">Lista de Usuarios Registrados</h2>
+
+        <!-- Tabla para usuarios registrados -->
+        <div class="overflow-x-auto">
+            <table class="w-full border border-sky-400 shadow-md rounded-lg overflow-hidden">
+                <thead class="bg-sky-500 text-white">
+                <tr>
+                    <th class="p-3 text-left">ID</th>
+                    <th class="p-3 text-left">Nombre Completo</th>
+                    <th class="p-3 text-left">Edad</th>
+                    <th class="p-3 text-left">Email</th>
+                    <th class="p-3 text-left">Password</th>
+                    <th class="p-3 text-left">Teléfono</th>
+                    <th class="p-3 text-center">Ocupación</th>
+                    <th class="p-3 text-center">Intereses</th>
+                    <th class="p-3 text-center">Acciones</th>
+                </tr>
+                </thead>
+                <tbody class="bg-sky-100 divide-y divide-sky-300">
+                <tr th:each="usuario : ${usuarios}" class="hover:bg-sky-200 transition duration-300">
+                    <td class="p-3" th:text="${usuario.id}"></td>
+                    <td class="p-3" th:text="${usuario.nombreCompleto}"></td>
+                    <td class="p-3" th:text="${usuario.edad}"></td>
+                    <td class="p-3" th:text="${usuario.email}"></td>
+                    <td class="p-3" th:text="${usuario.password}"></td>
+                    <td class="p-3" th:text="${usuario.telefono}"></td>
+                    <td class="p-3 text-center" th:text="${usuario.ocupacion}"></td>
+                    <td class="p-3 text-center" th:text="${usuario.interes}"></td>
+                    <td class="p-3 flex justify-center space-x-2">
+                        <a th:href="@{/actualizar/{id}(id=${usuario.id})}" class="text-sky-600 font-semibold hover:underline">Actualizar</a>
+                        <a th:href="@{/eliminar/{id}(id=${usuario.id})}" class="text-sky-800 font-semibold hover:underline">Eliminar</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<footer class="footer">
+    <p>© 2025 Biblioteca Virtual. Todos los derechos reservados.</p>
+</footer>
+
+</body>
+</html>

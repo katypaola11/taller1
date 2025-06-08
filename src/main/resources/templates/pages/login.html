@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Biblioteca Virtual</title>
+    <link rel="stylesheet" th:href="@{/css/styleLog.css}">
+
+</head>
+<body>
+<!-- Barra -->
+<header class="navbar">
+    <div class="nav-container">
+        <a href="#" class="nav-brand">
+            <span class="logo">📚</span> Biblioteca Portal de Letras
+        </a>
+        <ul class="nav-menu">
+            <li><a></a></li>
+            <li><a></a></li>
+            <li><a></a></li>
+            <li><a></a></li>
+            <li><a class="nav-link" th:href="@{/index}">Inicio</a></li>
+            <li><a class="nav-link" th:href="@{/registro}">Registro</a></li>
+        </ul>
+    </div>
+</header>
+<!-- Formulario -->
+<main class="login-container">
+    <form class="login-form" id="loginForm" th:action="@{/logC}" method="post" th:object="${usuario}">
+        <div class="login-header">
+            <h2>Iniciar Sesión</h2>
+            <p>Accede a tu biblioteca personal</p>
+        </div>
+        <div class="error-message" id="errorMessage">
+            Credenciales incorrectas. Por favor, verifica tu usuario y contraseña.
+        </div>
+        <div class="success-message" id="successMessage">
+            ¡Bienvenido! Redirigiendo...
+        </div>
+        <div class="form-group">
+            <label for="email">Correo electrónico</label>
+            <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="ejemplo@correo.com"
+                    required>
+        </div>
+        <div class="form-group">
+            <label for="password">Contraseña</label>
+            <div class="password-container">
+                <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Tu contraseña"
+                        required
+                >
+                <button type="button" class="show-password" onclick="togglePassword()">
+                    👁️
+                </button>
+            </div>
+        </div>
+        <div class="remember-forgot">
+            <label class="remember-me">
+                <input type="checkbox" id="remember" name="remember">
+                Recordarme
+            </label>
+            <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+        </div>
+        <button type="submit" class="login-btn">Iniciar Sesión</button>
+    </form>
+</main>
+<footer>
+    <p>© 2025 Biblioteca Portal de Letras - Todos los derechos reservados</p>
+</footer>
+<!-- Scrip de funcionamiento -->
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const showPasswordBtn = document.querySelector('.show-password');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            showPasswordBtn.textContent = '🙈';
+        } else {
+            passwordInput.type = 'password';
+            showPasswordBtn.textContent = '👁️';
+        }
+    }
+    // Efectos visuales adicionales
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+        });
+
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    });
+</script>
+</body>
+</html>

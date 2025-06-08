@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Usuario</title>
+    <link rel="stylesheet" th:href="@{/css/styleReg.css}">
+</head>
+<body class="registro-bg">
+
+<!-- Barra -->
+<header class="navbar">
+    <div class="nav-container">
+        <a href="#" class="nav-brand">
+            <span class="logo">📚</span>
+            Biblioteca Portal de Letras
+        </a>
+
+        <div class="nav-toggle" id="nav-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <ul class="nav-menu" id="nav-menu">
+            <li><a th:href="@{/index}" class="nav-link">Inicio</a></li>
+            <li><a th:href="@{/login}" class="nav-link">Login</a></li>
+        </ul>
+    </div>
+</header>
+
+<!-- Formulario -->
+<div class="form-container">
+    <h2>Registro de Usuario</h2>
+
+    <form th:action="@{/guardarUsuario}" method="post" th:object="${usuario}">
+        <input type="hidden" th:field="*{id}" />
+
+        <label for="nombreCompleto">Nombre Completo:</label>
+        <input type="text" th:field="*{nombreCompleto}" id="nombreCompleto" required />
+
+        <label for="edad">Edad:</label>
+        <input type="number" th:field="*{edad}" id="edad" required min="0" />
+
+        <label for="email">Correo Electrónico:</label>
+        <input type="email" th:field="*{email}" id="email" required />
+
+        <label for="password">Contraseña:</label>
+        <input type="password" th:field="*{password}" id="password" required />
+
+        <label for="telefono">Teléfono:</label>
+        <input type="tel" th:field="*{telefono}" id="telefono" />
+
+        <label for="ocupacion">Ocupación:</label>
+        <select th:field="*{ocupacion}" id="ocupacion">
+            <option value="">Selecciona una opción</option>
+            <option value="estudiante">Estudiante</option>
+            <option value="profesor">Profesor/Docente</option>
+            <option value="profesional">Profesional</option>
+            <option value="otro">Otro</option>
+        </select>
+
+        <label for="interes">Géneros de Interés:</label>
+        <input type="text" th:field="*{interes}" id="interes" placeholder="Ej. Ciencia ficción, Historia, Romance" />
+
+        <button type="submit" class="submit-btn">Registrar</button>
+    </form>
+</div>
+<footer>
+    <p>© 2025 Biblioteca Portal de Letras - Todos los derechos reservados</p>
+</footer>
+
+</body>
+</html>

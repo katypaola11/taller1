@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Virtual</title>
+    <link rel="stylesheet" th:href="@{/css/styleCat.css}">
+</head>
+<body>
+<!-- Barra -->
+<header class="navbar">
+    <div class="nav-container">
+        <a href="#" class="nav-brand">
+            <span class="logo">📚</span>
+            Biblioteca Portal de Letras
+        </a>
+        <div class="nav-toggle" id="nav-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-menu" id="nav-menu">
+            <li><a th:href="@{/index}" class="nav-link">Inicio</a></li>
+            <li><a th:href="@{/registro}" class="nav-link">Registro</a></li>
+            <li><a th:href="@{/login}" class="nav-link">Login</a></li>
+        </ul>
+    </div>
+</header>
+
+<section class="hero">
+    <h2>Descubre tu próxima gran lectura</h2>
+</section>
+
+<!-- Menu de Filtracion-->
+<div class="container">
+    <div class="search-filter-section">
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Buscar por título, autor o género...">
+            <button class="search-btn" onclick="searchBooks()">🔍 Buscar</button>
+        </div>
+
+        <div class="filters">
+            <select class="filter-select" id="genreFilter" onchange="filterBooks()">
+                <option value="">Todos los géneros</option>
+                <option value="Ficción">Ficción</option>
+                <option value="Ciencia Ficción">Ciencia Ficción</option>
+                <option value="Romance">Romance</option>
+                <option value="Misterio">Misterio</option>
+                <option value="Historia">Historia</option>
+                <option value="Biografía">Biografía</option>
+                <option value="Fantasía">Fantasía</option>
+            </select>
+
+            <select class="filter-select" id="statusFilter" onchange="filterBooks()">
+                <option value="">Todos los estados</option>
+                <option value="Disponible">Disponible</option>
+                <option value="Prestado">Prestado</option>
+                <option value="Reservado">Reservado</option>
+            </select>
+
+            <select class="filter-select" id="yearFilter" onchange="filterBooks()">
+                <option value="">Todos los años</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
+                <option value="older">Anteriores a 2020</option>
+            </select>
+        </div>
+    </div>
+    <div class="text-sm text-gray-600 mt-4 text-center">
+        Mostrando <span id="visibleCount">0</span> de <span id="totalCount">0</span> libros.
+    </div>
+
+    <div class="no-results" id="noResults" style="display: none;">
+        <h3>No se encontraron libros</h3>
+        <p>Intenta modificar los filtros o términos de búsqueda</p>
+    </div>
+</div>
+
+<!-- Listado de Libros -->
+
+<div class="catalogo" id="booksContainer">
+<div class="container">
+    <h1 style="text-align: center; color: #1a237e; font-size: 2.5rem; margin-bottom: 40px;">📖 Recomendaciones de Libros por Género</h1>
+
+    <div class="genre-section">
+        <h2 class="genre-title">Ficción</h2>
+        <div class="book" data-genre="Ficción" data-status="Disponible" data-year="2024">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/0307389731.01.L.jpg" alt="Cien años de soledad" onerror="this.parentElement.innerHTML='📖<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">Cien años de soledad</div>
+                <div class="book-author">Gabriel García Márquez</div>
+                <div class="book-description">Una obra maestra del realismo mágico que narra la historia de la familia Buendía a lo largo de siete generaciones en el pueblo ficticio de Macondo. García Márquez teje una narrativa épica llena de elementos fantásticos que reflejan la historia y cultura latinoamericana.</div>
+            </div>
+        </div>
+        <div class="book" data-genre="Ficción" data-status="Prestado" data-year="2023">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/0452284236.01.L.jpg" alt="1984" onerror="this.parentElement.innerHTML='📖<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">1984</div>
+                <div class="book-author">George Orwell</div>
+                <div class="book-description">Una distopía que presenta un mundo totalitario donde el gobierno controla cada aspecto de la vida humana. Orwell explora temas de vigilancia, manipulación de la verdad y la pérdida de libertad individual en una sociedad opresiva.</div>
+            </div>
+        </div>
+        <div class="book" data-genre="Ficción" data-status="Disponible" data-year="2020">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/0743273567.01.L.jpg" alt="El gran Gatsby" onerror="this.parentElement.innerHTML='📖<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">El gran Gatsby</div>
+                <div class="book-author">F. Scott Fitzgerald</div>
+                <div class="book-description">Ambientada en los años 20, esta novela retrata la decadencia del sueño americano a través de la historia de Jay Gatsby y su obsesión por Daisy Buchanan. Fitzgerald captura brillantemente la extravagancia y vacuidad de la era del jazz.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="genre-section">
+        <h2 class="genre-title">Ciencia Ficción</h2>
+
+        <div class="book" data-genre="Ciencia Ficción" data-status="Disponible" data-year="2021">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/0441172717.01.L.jpg" alt="Dune" onerror="this.parentElement.innerHTML='🚀<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">Dune</div>
+                <div class="book-author">Frank Herbert</div>
+                <div class="book-description">Una épica espacial que sigue a Paul Atreides en el planeta desértico Arrakis, fuente de la especia más valiosa del universo. Herbert construye un mundo complejo con política intergaláctica, ecología y misticismo en una narrativa que explora el poder y la supervivencia.</div>
+            </div>
+        </div>
+        <div class="book" data-genre="Ciencia Ficción" data-status="Prestado" data-year="2020">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/0553293354.01.L.jpg" alt="Fundación" onerror="this.parentElement.innerHTML='🚀<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">Fundación</div>
+                <div class="book-author">Isaac Asimov</div>
+                <div class="book-description">Primera novela de la famosa serie que presenta la psicohistoria, una ciencia que predice el futuro de grandes poblaciones. Asimov narra el declive del Imperio Galáctico y los esfuerzos por preservar el conocimiento humano durante la inevitable edad oscura.</div>
+            </div>
+        </div>
+        <div class="book" data-genre="Ciencia Ficción" data-status="Disponible" data-year="2023">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/0441569595.01.L.jpg" alt="Neuromante" onerror="this.parentElement.innerHTML='🚀<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">Neuromante</div>
+                <div class="book-author">William Gibson</div>
+                <div class="book-description">Considerada pionera del cyberpunk, esta novela sigue a Case, un hacker que navega por el ciberespacio en un futuro distópico. Gibson acuñó el término "ciberespacio" y exploró temas de inteligencia artificial y realidad virtual décadas antes de su popularización.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="genre-section">
+        <h2 class="genre-title">Romance</h2>
+        <div class="book" data-genre="Romance" data-status="Disponible" data-year="2022">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/0141439513.01.L.jpg" alt="Orgullo y prejuicio" onerror="this.parentElement.innerHTML='💕<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">Orgullo y prejuicio</div>
+                <div class="book-author">Jane Austen</div>
+                <div class="book-description">La historia de Elizabeth Bennet y Mr. Darcy en la Inglaterra georgiana, explorando temas de clase social, matrimonio y primeras impresiones erróneas. Austen combina romance con aguda crítica social y humor inteligente.</div>
+            </div>
+        </div>
+        <div class="book"  data-genre="Romance" data-status="Prestado" data-year="2021">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/0385343981.01.L.jpg" alt="Outlander" onerror="this.parentElement.innerHTML='💕<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">Outlander</div>
+                <div class="book-author">Diana Gabaldon</div>
+                <div class="book-description">Claire Randall, una enfermera de la Segunda Guerra Mundial, viaja misteriosamente al siglo XVIII escocés donde conoce a Jamie Fraser. Gabaldon mezcla romance épico con viajes en el tiempo, aventura histórica y elementos sobrenaturales.</div>
+            </div>
+        </div>
+        <div class="book" data-genre="Romance" data-status="Disponible" data-year="2020">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/0670026050.01.L.jpg" alt="Me before you" onerror="this.parentElement.innerHTML='💕<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">Me before you</div>
+                <div class="book-author">Jojo Moyes</div>
+                <div class="book-description">La relación entre Louisa Clark y Will Traynor, un hombre paralizado tras un accidente, que la contrata como cuidadora. Moyes explora temas profundos sobre la calidad de vida, el amor transformador y decisiones difíciles con sensibilidad y humor.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="genre-section">
+        <h2 class="genre-title">Misterio</h2>
+        <div class="book" data-genre="Misterio" data-status="Disponible" data-year="2022">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/0062073567.01.L.jpg" alt="El asesinato de Roger Ackroyd" onerror="this.parentElement.innerHTML='🔍<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">El asesinato de Roger Ackroyd</div>
+                <div class="book-author">Agatha Christie</div>
+                <div class="book-description">Hercule Poirot investiga el asesinato de Roger Ackroyd en una historia con un giro narrativo revolucionario que cambió para siempre el género del misterio. Christie desafía las convenciones tradicionales del detective con una narrativa innovadora que sorprende hasta el final.</div>
+            </div>
+        </div>
+        <div class="book" data-genre="Misterio" data-status="Disponible" data-year="2022">
+            <div class="book-image">
+                <img src="https://m.media-amazon.com/images/I/71Y8r1yzqqL._AC_UF1000,1000_QL80_.jpg" alt="El psicoanalista" onerror="this.parentElement.innerHTML='🔍<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">El psicoanalista</div>
+                <div class="book-author">John Katzenbach</div>
+                <div class="book-description">Un thriller psicológico donde el doctor Starks debe descubrir la identidad de su acosador en un juego mortal. Katzenbach crea una atmósfera de tensión constante mientras explora los límites entre la cordura y la locura en una narrativa que mantiene al lector en vilo.</div>
+            </div>
+        </div>
+        <div class="book" data-genre="Misterio" data-status="Disponible" data-year="2022">
+            <div class="book-image">
+                <img src="https://images.cdn1.buscalibre.com/fit-in/360x360/70/7d/707d2420c795307b77d9230a4f66afdb.jpg" alt="La verdad sobre el caso Harry Quebert" onerror="this.parentElement.innerHTML='🔍<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">La verdad sobre el caso Harry Quebert</div>
+                <div class="book-author">Joël Dicker</div>
+                <div class="book-description">Un joven escritor investiga el asesinato de una adolescente ocurrido décadas atrás, involucrando a su mentor literario. Dicker teje una compleja red de secretos y mentiras que conecta el pasado con el presente en una narrativa que explora la naturaleza de la verdad y la memoria.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="genre-section">
+        <h2 class="genre-title">Historia</h2>
+        <div class="book" data-genre="Historia" data-status="Disponible" data-year="2022">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/0062316095.01.L.jpg" alt="Sapiens: De animales a dioses" onerror="this.parentElement.innerHTML='📜<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">Sapiens: De animales a dioses</div>
+                <div class="book-author">Yuval Noah Harari</div>
+                <div class="book-description">Un recorrido fascinante por la historia de la humanidad desde la prehistoria hasta la era moderna. Harari examina cómo los Homo sapiens conquistaron el mundo a través de tres revoluciones fundamentales: cognitiva, agrícola y científica, ofreciendo perspectivas provocativas sobre nuestro pasado y futuro.</div>
+            </div>
+        </div>
+        <div class="book" data-genre="Historia" data-status="Disponible" data-year="2022">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/0143110373.01.L.jpg" alt="Armas, gérmenes y acero" onerror="this.parentElement.innerHTML='📜<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">Armas, gérmenes y acero</div>
+                <div class="book-author">Jared Diamond</div>
+                <div class="book-description">Explora cómo la geografía y la biología han influido en el desarrollo desigual de las civilizaciones humanas. Diamond analiza los factores ambientales que determinaron el destino de las sociedades, ofreciendo una perspectiva única sobre por qué algunas culturas dominaron mientras otras fueron conquistadas.</div>
+            </div>
+        </div>
+        <div class="book" data-genre="Historia" data-status="Disponible" data-year="2022">
+            <div class="book-image">
+                <img src="https://images.cdn2.buscalibre.com/fit-in/360x360/61/fc/61fcec09416f9a60dfe3b4e07dcbf3c0.jpg" alt="Historia del siglo XX" onerror="this.parentElement.innerHTML='📜<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">Historia del siglo XX</div>
+                <div class="book-author">Eric Hobsbawm</div>
+                <div class="book-description">Un análisis magistral de los eventos que definieron el siglo XX, desde la Primera Guerra Mundial hasta la caída del comunismo. Hobsbawm ofrece una perspectiva global de las transformaciones políticas, económicas y sociales que moldearon el mundo moderno.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="genre-section">
+        <h2 class="genre-title">Biografía</h2>
+        <div class="book" data-genre="Biografía" data-status="Disponible" data-year="2022">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/1451648537.01.L.jpg" alt="Steve Jobs" onerror="this.parentElement.innerHTML='👤<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">Steve Jobs</div>
+                <div class="book-author">Walter Isaacson</div>
+                <div class="book-description">La biografía definitiva del visionario fundador de Apple, basada en entrevistas exclusivas. Isaacson revela la personalidad compleja de Jobs, sus innovaciones revolucionarias y su impacto duradero en la tecnología, el diseño y la cultura popular moderna.</div>
+            </div>
+        </div>
+        <div class="book" data-genre="Biografía" data-status="Disponible" data-year="2022">
+            <div class="book-image">
+                <img src="https://leadersummariespro.blob.core.windows.net/lsm/Entity/884338C8D3549F65ABF0302612AFF74E/739458F37D3EA361DA853A7B10CFD8C3/be85bdd3-8629-4384-b190-a10732ba925b.jpg" alt="El camino largo hacia la libertad" onerror="this.parentElement.innerHTML='👤<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">El camino largo hacia la libertad</div>
+                <div class="book-author">Nelson Mandela</div>
+                <div class="book-description">Las memorias íntimas de Nelson Mandela sobre su extraordinaria vida y lucha contra el apartheid. Desde su juventud hasta su presidencia, Mandela relata con honestidad y sabiduría su transformación de activista a líder mundial, ofreciendo lecciones sobre perdón, reconciliación y liderazgo.</div>
+            </div>
+        </div>
+        <div class="book" data-genre="Biografía" data-status="Disponible" data-year="2022">
+            <div class="book-image">
+                <img src="https://images.cdn1.buscalibre.com/fit-in/360x360/e1/5f/e15f89a3e8f60854c6dce67070944796.jpg" alt="Educated" onerror="this.parentElement.innerHTML='👤<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">Educated</div>
+                <div class="book-author">Tara Westover</div>
+                <div class="book-description">Una memoir poderosa sobre una mujer que creció en una familia mormona fundamentalista en Idaho y nunca pisó un aula hasta los 17 años. Westover narra su transformación a través de la educación, explorando temas de familia, identidad y el poder liberador del conocimiento.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="genre-section">
+        <h2 class="genre-title">Fantasía</h2>
+        <div class="book" data-genre="Fantasía" data-status="Disponible" data-year="2022">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/054792822X.01.L.jpg" alt="El señor de los anillos" onerror="this.parentElement.innerHTML='🧙‍♂️<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">El señor de los anillos</div>
+                <div class="book-author">J.R.R. Tolkien</div>
+                <div class="book-description">La saga de fantasía épica más influyente de todos los tiempos. Tolkien creó un mundo mitológico completo con lenguajes, culturas y una historia milenaria. La lucha entre el bien y el mal se despliega en la Tierra Media mientras Frodo emprende su misión para destruir el Anillo Único.</div>
+            </div>
+        </div>
+        <div class="book" data-genre="Fantasía" data-status="Disponible" data-year="2022">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/0756404746.01.L.jpg" alt="El nombre del viento" onerror="this.parentElement.innerHTML='🧙‍♂️<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">El nombre del viento</div>
+                <div class="book-author">Patrick Rothfuss</div>
+                <div class="book-description">La historia de Kvothe, un joven con habilidades extraordinarias que se convierte en leyenda. Rothfuss combina una narrativa magistral con un sistema de magia único, creando un mundo rico en detalles donde la música, la magia y el conocimiento se entrelazan de forma fascinante.</div>
+            </div>
+        </div>
+        <div class="book" data-genre="Fantasía" data-status="Disponible" data-year="2022">
+            <div class="book-image">
+                <img src="https://images-na.ssl-images-amazon.com/images/P/0553103547.01.L.jpg" alt="Juego de Tronos" onerror="this.parentElement.innerHTML='🧙‍♂️<br>Portada<br>no<br>disponible'">
+            </div>
+            <div class="book-content">
+                <div class="book-title">Juego de Tronos</div>
+                <div class="book-author">George R.R. Martin</div>
+                <div class="book-description">Una saga de fantasía épica que redefine el género con su realismo brutal y complejidad política. Martin entrelaza múltiples tramas en los Siete Reinos de Poniente, donde las intrigas palaciegas son tan peligrosas como los dragones y los caminantes blancos que amenazan desde el norte.</div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="modal" id="bookModal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <div id="modalContent">
+        </div>
+    </div>
+</div>
+
+<!-- Scrip busqueda-->
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        updateStats();
+    });
+
+    function searchBooks() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const books = document.querySelectorAll('.catalogo .book');
+        let visibleCount = 0;
+
+        books.forEach(book => {
+            const title = book.querySelector('.book-title')?.textContent.toLowerCase() || '';
+            const author = book.querySelector('.book-author')?.textContent.toLowerCase() || '';
+            const description = book.querySelector('.book-description')?.textContent.toLowerCase() || '';
+
+            const matches = title.includes(searchTerm) || author.includes(searchTerm) || description.includes(searchTerm);
+
+            book.style.display = matches ? 'block' : 'none';
+            if (matches) visibleCount++;
+        });
+
+        document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+        updateStats();
+    }
+
+    function filterBooks() {
+        const genre = document.getElementById('genreFilter').value.toLowerCase();
+        const status = document.getElementById('statusFilter').value.toLowerCase();
+        const year = document.getElementById('yearFilter').value.toLowerCase();
+        const books = document.querySelectorAll('.catalogo .book');
+        let visibleCount = 0;
+
+        books.forEach(book => {
+            const bookGenre = (book.getAttribute('data-genre') || '').toLowerCase();
+            const bookStatus = (book.getAttribute('data-status') || '').toLowerCase();
+            const bookYear = book.getAttribute('data-year') || '2020';
+
+            const matchesGenre = !genre || bookGenre === genre;
+            const matchesStatus = !status || bookStatus === status;
+
+            let matchesYear = true;
+            if (year === 'older') {
+                matchesYear = parseInt(bookYear) < 2020;
+            } else if (year) {
+                matchesYear = bookYear === year;
+            }
+
+            const shouldDisplay = matchesGenre && matchesStatus && matchesYear;
+            book.style.display = shouldDisplay ? 'block' : 'none';
+            if (shouldDisplay) visibleCount++;
+        });
+
+        document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+        updateStats();
+    }
+
+    function updateStats() {
+        const allBooks = document.querySelectorAll('.catalogo .book');
+        const visibleBooks = Array.from(allBooks).filter(book => book.style.display !== 'none');
+        document.getElementById('visibleCount').textContent = visibleBooks.length;
+        document.getElementById('totalCount').textContent = allBooks.length;
+    }
+</script>
+<footer>
+    <p>© 2025 Biblioteca Portal de Letras - Todos los derechos reservados</p>
+</footer>
+</body>
+</html>
