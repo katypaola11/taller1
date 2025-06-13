@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario Libro</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+<div class="container mt-5">
+    <form th:action="@{/guardarLibro}" method="post" th:object="${libro}">
+
+        <div class="mb-3" hidden>
+            <label for="codigo" class="form-label">Código</label>
+            <input type="number" class="form-control" id="codigo" th:field="*{id}">
+        </div>
+
+        <div class="mb-3">
+            <label for="titulo" class="form-label">Título</label>
+            <input type="text" class="form-control" id="titulo" th:field="*{titulo}">
+        </div>
+
+        <div class="mb-3">
+            <label for="editorial" class="form-label">Editorial</label> <!-- CORREGIDO -->
+            <input type="text" class="form-control" id="editorial" th:field="*{editorial}"> <!-- CORREGIDO -->
+        </div>
+
+        <div class="mb-3">
+            <label for="publicacion"  class="form-label">Año de Publicacion</label>
+            <input type="date" class="form-control" id="publicacion" th:field="*{publicacion}">
+        </div>
+
+        <div class="mb-3">
+            <label for="paginas" class="form-label">Páginas</label>
+            <input type="number" class="form-control" id="paginas" th:field="*{paginas}">
+        </div>
+
+
+        <div class="mb-3">
+            <label for="idioma" class="form-label">Idioma <span class="text-danger">*</span></label>
+            <select class="form-select"
+                    id="idioma"
+                    th:field="*{idioma}"
+                    th:classappend="${#fields.hasErrors('idioma')} ? 'is-invalid' : ''"
+                    required>
+                <option value="">Seleccione un idioma</option>
+                <option value="Español">Español</option>
+                <option value="Inglés">Inglés</option>
+                <option value="Francés">Francés</option>
+                <option value="Alemán">Alemán</option>
+                <option value="Portugués">Portugués</option>
+                <option value="Italiano">Italiano</option>
+            </select>
+            <div th:if="${#fields.hasErrors('idioma')}"
+                 th:errors="*{idioma}"
+                 class="invalid-feedback"></div>
+        </div>
+
+        <!-- Campo para seleccionar Autor -->
+        <div class="mb-3">
+            <label for="autor" class="form-label">Autor <span class="text-danger">*</span></label>
+            <select id="autor"
+                    class="form-select"
+                    th:field="*{autor.id}"
+                    required>
+                <option value="">Seleccione un autor</option>
+                <option th:each="autor : ${autores}"
+                        th:value="${autor.id}"
+                        th:text="${autor.nombre}"
+                        >
+                </option>
+            </select>
+
+
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar</button> <!-- CORREGIDO -->
+    </form>
+</div>
+</body>
+</html>

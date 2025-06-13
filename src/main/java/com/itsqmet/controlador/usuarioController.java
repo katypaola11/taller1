@@ -2,9 +2,11 @@ package com.itsqmet.controlador;
 
 import com.itsqmet.entidad.Usuario;
 import com.itsqmet.servicio.UsuarioServicio;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +16,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-public class usuarioController {
+public class
+usuarioController {
 
 
     @Autowired
@@ -35,12 +38,19 @@ public class usuarioController {
         return "pages/lista";
     }
 
+
+
     //guardar
     @PostMapping("/guardarUsuario")
-    public String nuevoUsuario(@ModelAttribute Usuario usuario){
-        System.out.println("Guardar usuario:" + usuario);
-        servicio.guardarUsuario(usuario);
-        return "redirect:/usuarioN";
+    public String nuevoUsuario(@Valid @ModelAttribute Usuario usuario, BindingResult bindingResult, Model model){
+        if (bindingResult.hasErrors()){
+            model.addAttribute("errores",bindingResult.getAllErrors());
+            return "pages/registroUsuario";
+        }else {
+            System.out.println("Guardar usuario:" + usuario);
+            servicio.guardarUsuario(usuario);
+            return "redirect:/usuarioN";
+        }
     }
 
     //actualizar - MOSTRAR FORMULARIO
@@ -48,10 +58,10 @@ public class usuarioController {
     public String actualizarUsuario(@PathVariable Long id, Model model) {
         Optional<Usuario> usuarioOpt = servicio.buscarporId(id);
         if (usuarioOpt.isPresent()) {
-            model.addAttribute("usuario", usuarioOpt.get()); // ✅ CORREGIDO: era "menu"
+            model.addAttribute("usuario", usuarioOpt.get());
             return "pages/registroUsuario";
         } else {
-            // Manejar caso cuando no se encuentra el usuario
+
             return "redirect:/usuarioN";
         }
     }
@@ -60,7 +70,7 @@ public class usuarioController {
     @PostMapping("/actualizarUsuario")
     public String procesarActualizacion(@ModelAttribute Usuario usuario) {
         System.out.println("Actualizar usuario:" + usuario);
-        servicio.guardarUsuario(usuario); // Mismo método save funciona para crear y actualizar
+        servicio.guardarUsuario(usuario);
         return "redirect:/usuarioN";
     }
 
