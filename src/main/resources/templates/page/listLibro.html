@@ -35,8 +35,8 @@
             <td th:text="${libro.idioma}"></td>
             <td th:text="${libro.autor.nombre}"></td>
             <td>
-                <a th:href="@{/editarLibro/{id}(id=${libro.id})}" class="btn btn-actualizar">Actualizar</a>
-                <a th:href="@{/eliminarLibro/{id}(id=${libro.id})}" class="btn btn-eliminar">Eliminar</a>
+                <a th:href="@{/libros/editarLibro/{id}(id=${libro.id})}" class="btn btn-actualizar">Actualizar</a>
+                <a th:href="@{/libros/eliminarLibro/{id}(id=${libro.id})}" class="btn btn-eliminar">Eliminar</a>
             </td>
         </tr>
         </tbody>

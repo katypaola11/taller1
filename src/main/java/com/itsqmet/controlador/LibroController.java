@@ -43,10 +43,14 @@ public class LibroController {
     private AutorServicio autorServicio;
 
 
-@
+    @GetMapping
+    public String redireccionarLibros() {
+        return "redirect:/libros/librosT";
+    }
+
 
     //leer los libros
-    @GetMapping ("/libros")
+    @GetMapping ("/librosT")
     public String listarLibros(@RequestParam (name = "buscarLibro", required = false, defaultValue = "")
                                String buscarLibro, Model model){
         List<Libro> libros = libroServicio.buscarLibroPorTitulo(buscarLibro);
@@ -57,7 +61,7 @@ public class LibroController {
 
     //Aqui se puede hacer la extraccion en la base de datos
     //Crear Nuevo Libro
-    @GetMapping("/formularioLibro")
+    @GetMapping("/libros/formularioLibro")
     public String formularioLibro(Model model){
         model.addAttribute("libro", new Libro());
         //Paso de autores desde el servicio autor a formulario
