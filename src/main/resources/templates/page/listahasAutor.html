@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Lista Autor Libros</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"></script>
 </head>
 <body class="bg-gray-100">
 <div class="container mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
-    <h2 class="text-3xl font-semibold text-gray-800 mb-4" th:text="${autor.nombre}">Autor</h2> <!-- Nombre del autor -->
+    <h2 class="text-3xl font-semibold text-gray-800 mb-4" th:text="${autor.nombre}">Autor</h2>
     <div class="mb-6">
         <h3 class="text-xl font-medium text-gray-700 mb-2">Detalles del Autor:</h3>
         <p class="text-sm text-gray-600"><strong>Nacionalidad:</strong> <span th:text="${autor.nacionalidad}"></span></p>
         <p class="text-sm text-gray-600"><strong>Fecha de Nacimiento:</strong> <span th:text="${#dates.format(autor.fechaNacimiento, 'yyyy-MM-dd')}"></span></p>
-
     </div>
     <div class="mb-6">
         <h3 class="text-xl font-medium text-gray-700 mb-4">Libros de este autor:</h3>
@@ -21,6 +21,7 @@
                 <th class="px-4 py-2 text-sm font-medium text-gray-600">Titulo</th>
                 <th class="px-4 py-2 text-sm font-medium text-gray-600">Editorial</th>
                 <th class="px-4 py-2 text-sm font-medium text-gray-600">Numero de paginas</th>
+                <th class="px-4 py-2 text-sm font-medium text-gray-600">Acciones</th>
             </tr>
             </thead>
             <tbody>
@@ -28,13 +29,106 @@
                 <td class="px-4 py-2 text-sm text-gray-700" th:text="${libro.titulo}"></td>
                 <td class="px-4 py-2 text-sm text-gray-700" th:text="${libro.editorial}"></td>
                 <td class="px-4 py-2 text-sm text-gray-700" th:text="${libro.paginas}"></td>
+                <td class="px-4 py-2 text-sm text-gray-700">
+                    <<a  th:href="@{/libros/view/3}" target="_blank">Leer en línea</a>
+                    <button class="px-4 py-2 text-white bg-green-600 hover:bg-green-700 rounded-lg"
+                            th:onclick="'descargarLibro(' + ${libro.id} + ')'"
+                            th:data-titulo="${libro.titulo}">
+                        Descargar
+                    </button>
+                </td>
             </tr>
             </tbody>
         </table>
     </div>
     <div class="mt-6">
-        <a th:href="@{/autores}" class="px-6 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg transition duration-200 ease-in-out">Volver a la lista de autores</a>
+        <a th:href="@{/autores}" class="px-6 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded-lg transition duration-200 ease-in-out">Volver a Autores</a>
     </div>
 </div>
+
+<!-- Modal para leer en línea -->
+<div id="modalLectura" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; height: 90%; background: white; border-radius: 8px; padding: 20px;">
+        <span id="cerrarModal" style="position: absolute; top: 15px; right: 25px; font-size: 28px; cursor: pointer;">&times;</span>
+        <h3 id="tituloLibro" style="margin-bottom: 20px; font-size: 24px; font-weight: bold;"></h3>
+        <iframe id="pdfViewer" style="width: 100%; height: calc(100% - 80px); border: none;"></iframe>
+    </div>
+</div>
+
+<!-- Mensaje de descarga -->
+<div id="mensajeDescarga" style="display: none; position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px 20px; border-radius: 5px; z-index: 1001;">
+    Descarga iniciada...
+</div>
+
+<script>
+    function leerEnLinea(libroId) {
+        // Obtener datos del libro
+        fetch('/api/libro/' + libroId)
+            .then(response => response.json())
+            .then(libro => {
+                // Mostrar el modal
+                document.getElementById('modalLectura').style.display = 'block';
+                document.getElementById('tituloLibro').textContent = libro.titulo;
+
+                // Cargar el PDF en el iframe
+                document.getElementById('pdfViewer').src = '/pdf/view/' + libroId;
+            })
+            .catch(error => {
+                console.error('Error al cargar el libro:', error);
+                alert('Error al cargar el libro. Inténtalo de nuevo.');
+            });
+    }
+
+    function descargarLibro(libroId) {
+        // Obtener el título desde el atributo data-titulo
+        const boton = event.target;
+        const titulo = boton.getAttribute('data-titulo');
+
+        // Mostrar mensaje de descarga
+        const mensaje = document.getElementById('mensajeDescarga');
+        mensaje.style.display = 'block';
+
+        // Crear enlace de descarga
+        const link = document.createElement('a');
+        link.href = '/pdf/download/' + libroId;
+        link.download = titulo + '.pdf';
+        link.style.display = 'none';
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Ocultar mensaje después de 3 segundos
+        setTimeout(() => {
+            mensaje.style.display = 'none';
+        }, 3000);
+    }
+
+    // Cerrar modal
+    document.getElementById('cerrarModal').onclick = function() {
+        document.getElementById('modalLectura').style.display = 'none';
+        document.getElementById('pdfViewer').src = '';
+    }
+
+    // Cerrar modal al hacer clic fuera de él
+    window.onclick = function(event) {
+        const modal = document.getElementById('modalLectura');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+            document.getElementById('pdfViewer').src = '';
+        }
+    }
+
+    // Cerrar modal con ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modal = document.getElementById('modalLectura');
+            if (modal.style.display === 'block') {
+                modal.style.display = 'none';
+                document.getElementById('pdfViewer').src = '';
+            }
+        }
+    });
+</script>
 </body>
 </html>

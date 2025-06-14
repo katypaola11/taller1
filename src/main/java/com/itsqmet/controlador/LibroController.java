@@ -7,15 +7,33 @@ import com.itsqmet.servicio.LibroServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.web.multipart.MultipartFile;
+import java.nio.file.StandardCopyOption;
+
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.File;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+
+
 
 import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequestMapping("/libros")
 
 public class LibroController {
     @Autowired
@@ -23,6 +41,9 @@ public class LibroController {
 
     @Autowired
     private AutorServicio autorServicio;
+
+
+@
 
     //leer los libros
     @GetMapping ("/libros")
@@ -46,12 +67,26 @@ public class LibroController {
 
     }
 
-    @PostMapping ("/guardarLibro")
-    public String crearLibro(Libro libro){
-        libroServicio.guardarLibro(libro);
-        return  "redirect:/libros";
-
+    @PostMapping("/guardarLibro")
+    public String guardarLibro(@ModelAttribute Libro libro,
+                               @RequestParam("archivo") MultipartFile archivo) {
+        if (!archivo.isEmpty()) {
+            String nombreArchivo = archivo.getOriginalFilename(); // nombre del PDF subido
+            Path ruta = Paths.get(rutaBase, nombreArchivo);
+            try {
+                Files.copy(archivo.getInputStream(), ruta, StandardCopyOption.REPLACE_EXISTING);
+                libro.setArchivoPdf("archivoPdf"); // guardamos el nombre del archivo PDF en la entidad
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        libroServicio.guardarLibro(libro); // guarda libro con título y nombre de archivo
+        return "redirect:/libros";
     }
+
+
+
+
 
     //Actualizar libro
     @GetMapping("/editarLibro/{id}")
@@ -71,4 +106,54 @@ public class LibroController {
         return "redirect:/libros";
 
     }
+
+    // Endpoint para leer PDF en línea
+    private final String rutaBase = "C:/Users/User/Documents/librosPdf";
+
+    @GetMapping("/view/{id}")
+    @ResponseBody
+    public ResponseEntity<Resource> verPdf(@PathVariable Long id) {
+        // Obtener libro por id, obtener nombre de archivo, etc.
+        String nombreArchivo = "ema.pdf"; // ejemplo estático
+
+        File archivo = new File(rutaBase, nombreArchivo);
+        if (!archivo.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Resource resource = new FileSystemResource(archivo);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + nombreArchivo + "\"")
+                .body(resource);
+    }
+
+
+    // Endpoint para descargar PDF
+    @GetMapping("/download/{id}")
+    public ResponseEntity<Resource> descargarPdf(@PathVariable Long id) {
+        try {
+            Libro libro = libroServicio.obtenerPorId(id);
+
+            // Ruta donde están almacenados los PDFs
+            String rutaPdf = "uploads/pdfs/" + libro.getArchivoPdf();
+            Path path = Paths.get(rutaPdf);
+
+            if (!Files.exists(path)) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Resource resource = new UrlResource(path.toUri());
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + libro.getTitulo() + ".pdf\"")
+                    .body(resource);
+
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
 }

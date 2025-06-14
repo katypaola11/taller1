@@ -52,4 +52,10 @@ public class LibroServicio {
     public boolean existenLibrosPorAutor(Long autorId) {
         return !libroRepositorio.findByAutorId(autorId).isEmpty();
     }
+
+    // Método para obtener libro por ID
+    public Libro obtenerPorId(Long id) {
+        Optional<Libro> libro = libroRepositorio.findById(id);
+        return libro.orElse(null);
+    }
 }

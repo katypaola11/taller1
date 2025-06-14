@@ -10,7 +10,7 @@
 
 <body>
 <div class="container mt-5">
-    <form th:action="@{/guardarLibro}" method="post" th:object="${libro}">
+    <form th:action="@{/guardarLibro}" th:object="${libro}" method="post" enctype="multipart/form-data">
 
         <div class="mb-3" hidden>
             <label for="codigo" class="form-label">Código</label>
@@ -25,11 +25,6 @@
         <div class="mb-3">
             <label for="editorial" class="form-label">Editorial</label> <!-- CORREGIDO -->
             <input type="text" class="form-control" id="editorial" th:field="*{editorial}"> <!-- CORREGIDO -->
-        </div>
-
-        <div class="mb-3">
-            <label for="publicacion"  class="form-label">Año de Publicacion</label>
-            <input type="date" class="form-control" id="publicacion" th:field="*{publicacion}">
         </div>
 
         <div class="mb-3">
@@ -76,8 +71,13 @@
 
         </div>
 
+        <label >Archivo PDF:</label>
+        <input type="file" id="archivo" name="archivo" accept="application/pdf" />
+
         <button type="submit" class="btn btn-primary">Guardar</button> <!-- CORREGIDO -->
     </form>
+
+
 </div>
 </body>
 </html>
