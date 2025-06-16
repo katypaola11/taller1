@@ -1,33 +1,257 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Autor - Portal de Letras</title>
+
+    <!-- Inter web font from bunny.net (GDPR compliant) -->
+    <link rel="preconnect" href="https://fonts.bunny.net" />
+    <link
+            href="https://fonts.bunny.net/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+            rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+
+    <!-- Tailwind CSS v4 Configuration -->
+    <style type="text/tailwindcss">
+        /* Class based dark mode */
+        @custom-variant dark (&:where(.dark, .dark *));
+
+        /* Theme configuration */
+        @theme {
+          /* Fonts */
+          --default-font-family: "Inter";
+        }
+    </style>
+
+    <!-- Alpine.js -->
+    <script
+            defer
+            src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+
+    <!-- Alpine.js (x-cloak) -->
+    <style>
+        [x-cloak] {
+          display: none !important;
+        }
+    </style>
 </head>
-<body>
-<form th:action="@{/GuardarAutor}" method="post" th:object="${autor}">
-    <div class="mb-3" hidden>
-        <label for="id" class="form-label">id</label>
-        <input type="number" class="form-control" id="id" th:field="*{id}">
-    </div>
-    <div class="mb-3">
-        <label for="nombre" class="form-label">Nombre de Autor</label>
-        <input type="text" class="form-control" id="nombre" th:field="*{nombre}">
-    </div>
+<body class="antialiased">
+<!-- Page Container -->
+<div
+        x-data="{
+        darkMode: false,
+        mobileMenu: false,
+        toggleDarkMode() {
+          this.darkMode = ! this.darkMode;
+          if (this.darkMode) {
+            document.body.parentNode.classList.add('dark');
+          } else {
+            document.body.parentNode.classList.remove('dark');
+          }
+        },
+        toggleMobileMenu() {
+          this.mobileMenu = ! this.mobileMenu;
+        }
+      }"
+        class="min-h-dvh min-w-80 bg-white text-zinc-800 dark:bg-zinc-950 dark:text-zinc-100"
+>
+    <!-- Page Content -->
+    <main class="mx-auto flex max-w-4xl flex-auto flex-col px-4 pb-4 lg:px-8 lg:pb-8">
 
-    <div class="mb-3">
-        <label for="nacionalidad" class="form-label">nacionalidad</label>
-        <input type="text" class="form-control" id="nacionalidad" th:field="*{nacionalidad}">
-    </div>
+        <!-- Navigation Header -->
+        <header class="flex flex-none items-center justify-between py-7">
+            <div class="flex items-center gap-3">
+                <!-- Logo -->
+                <a th:href="@{/index}" class="flex items-center gap-2 text-2xl font-thin tracking-widest hover:text-purple-600 active:opacity-75 dark:hover:text-purple-400">
+                    <span class="text-3xl">📚</span>
+                    <span class="hidden sm:inline">Portal de Letras</span>
+                    <span class="sm:hidden">Biblioteca</span>
+                </a>
 
-    <div class="mb-3">
-        <label for="fechaNacimiento" class="form-label">fechaNacimiento</label>
-        <input type="date" class="form-control" id="fechaNacimiento" th:field="*{fechaNacimiento}">
-    </div>
-    <button type="submit" class="btn btn-guardar">Guardar</button>
-</form>
+                <!-- Toggle Dark Mode -->
+                <button
+                        x-on:click="toggleDarkMode()"
+                        type="button"
+                        class="relative inline-flex size-9 items-center justify-center text-zinc-600 hover:opacity-75 dark:text-zinc-400"
+                >
+                    <div
+                            x-cloak
+                            x-show="!darkMode"
+                            x-transition:enter="transition ease-out duration-150"
+                            x-transition:enter-start="opacity-0 rotate-180"
+                            x-transition:enter-end="opacity-100 rotate-0"
+                            x-transition:leave="transition ease-in duration-100"
+                            x-transition:leave-start="opacity-100 rotate-0"
+                            x-transition:leave-end="opacity-0 rotate-180"
+                            class="absolute inset-0 flex items-center justify-center"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                        </svg>
+                    </div>
+                    <div
+                            x-cloak
+                            x-show="darkMode"
+                            x-transition:enter="transition ease-out duration-150"
+                            x-transition:enter-start="opacity-0 rotate-180"
+                            x-transition:enter-end="opacity-100 rotate-0"
+                            x-transition:leave="transition ease-in duration-100"
+                            x-transition:leave-start="opacity-100 rotate-0"
+                            x-transition:leave-end="opacity-0 rotate-180"
+                            class="absolute inset-0 flex items-center justify-center"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                        </svg>
+                    </div>
+                </button>
+            </div>
 
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex items-center gap-6">
+                <nav class="flex items-center gap-6">
+                    <a th:href="@{/index}" class="text-sm font-medium decoration-purple-600 decoration-2 underline-offset-8 hover:text-black hover:underline dark:decoration-purple-400 dark:hover:text-white">
+                        Inicio
+                    </a>
+                    <a th:href="@{/autores}" class="text-sm font-medium decoration-purple-600 decoration-2 underline-offset-8 hover:text-black hover:underline dark:decoration-purple-400 dark:hover:text-white">
+                        Autores
+                    </a>
+                    <a th:href="@{/login}" class="text-sm font-medium decoration-purple-600 decoration-2 underline-offset-8 hover:text-black hover:underline dark:decoration-purple-400 dark:hover:text-white">
+                        Iniciar Sesión
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button
+                    x-on:click="toggleMobileMenu()"
+                    class="md:hidden relative inline-flex size-9 items-center justify-center text-zinc-600 hover:opacity-75 dark:text-zinc-400"
+            >
+                <svg x-show="!mobileMenu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+                <svg x-show="mobileMenu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </header>
+
+        <!-- Mobile Navigation -->
+        <div x-show="mobileMenu" x-transition class="md:hidden mb-6 rounded-xl bg-zinc-100 p-4 dark:bg-zinc-900">
+            <nav class="flex flex-col space-y-3">
+                <a th:href="@{/index}" class="text-sm font-medium hover:text-purple-600 dark:hover:text-purple-400">Inicio</a>
+                <a th:href="@{/autores}" class="text-sm font-medium hover:text-purple-600 dark:hover:text-purple-400">Autores</a>
+                <a th:href="@{/login}" class="text-sm font-medium hover:text-purple-600 dark:hover:text-purple-400">Iniciar Sesión</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 gap-8">
+
+            <!-- Page Title -->
+            <div class="col-span-1">
+                <h1 class="text-4xl font-medium text-black dark:text-white mb-2 flex items-center gap-3">
+                    <span>✍️</span> Formulario de Autor
+                </h1>
+                <p class="text-lg text-zinc-600 dark:text-zinc-400">
+                    Completa la información del autor
+                </p>
+            </div>
+
+            <!-- Form Section -->
+            <div class="col-span-1">
+                <div class="rounded-xl bg-zinc-100 p-8 dark:bg-zinc-900">
+                    <form th:action="@{/GuardarAutor}" method="post" th:object="${autor}" class="space-y-6">
+
+                        <!-- Hidden ID Field -->
+                        <div class="hidden">
+                            <label for="id" class="block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-2">ID</label>
+                            <input
+                                    type="number"
+                                    id="id"
+                                    th:field="*{id}"
+                                    class="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-500 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-400 dark:focus:border-purple-400"
+                            >
+                        </div>
+
+                        <!-- Nombre Field -->
+                        <div>
+                            <label for="nombre" class="block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-2">
+                                Nombre del Autor
+                            </label>
+                            <input
+                                    type="text"
+                                    id="nombre"
+                                    th:field="*{nombre}"
+                                    class="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-500 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-400 dark:focus:border-purple-400"
+                                    placeholder="Ingresa el nombre completo del autor"
+                                    required
+                            >
+                        </div>
+
+                        <!-- Nacionalidad Field -->
+                        <div>
+                            <label for="nacionalidad" class="block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-2">
+                                Nacionalidad
+                            </label>
+                            <input
+                                    type="text"
+                                    id="nacionalidad"
+                                    th:field="*{nacionalidad}"
+                                    class="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-500 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-400 dark:focus:border-purple-400"
+                                    placeholder="Ej: Colombiana, Española, Argentina"
+                                    required
+                            >
+                        </div>
+
+                        <!-- Fecha de Nacimiento Field -->
+                        <div>
+                            <label for="fechaNacimiento" class="block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-2">
+                                Fecha de Nacimiento
+                            </label>
+                            <input
+                                    type="date"
+                                    id="fechaNacimiento"
+                                    th:field="*{fechaNacimiento}"
+                                    class="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-500 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-400 dark:focus:border-purple-400"
+                                    required
+                            >
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                            <button
+                                    type="submit"
+                                    class="inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 px-6 py-3 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500/20 active:bg-green-800 transition-colors"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+                                Guardar Autor
+                            </button>
+
+                            <a
+                                    th:href="@{/autores}"
+                                    class="inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-600 px-6 py-3 text-sm font-medium text-white hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-500/20 active:bg-zinc-800 transition-colors"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                                </svg>
+                                Cancelar
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
 </body>
 </html>

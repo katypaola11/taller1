@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface UsuarioRepositorio extends JpaRepository <Usuario, Long>{
-    List <Usuario> findByNombreCompletoContainingIgnoreCase(String nombreCompleto);
+    List <Usuario> findByNombreCompletoContainingIgnoreCase(String nombreCompleto);@
 }

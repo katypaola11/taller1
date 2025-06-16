@@ -1,80 +1,258 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Biblioteca Virtual</title>
-    <link rel="stylesheet" th:href="@{/css/styleLog.css}">
 
+    <!-- Inter web font from bunny.net (GDPR compliant) -->
+    <link rel="preconnect" href="https://fonts.bunny.net" />
+    <link
+            href="https://fonts.bunny.net/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+            rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+
+    <!-- Tailwind CSS v4 Configuration -->
+    <style type="text/tailwindcss">
+        /* Class based dark mode */
+        @custom-variant dark (&:where(.dark, .dark *));
+
+        /* Theme configuration */
+        @theme {
+          /* Fonts */
+          --default-font-family: "Inter";
+        }
+    </style>
+
+    <!-- Alpine.js -->
+    <script
+            defer
+            src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+
+    <!-- Alpine.js (x-cloak) -->
+    <style>
+        [x-cloak] {
+          display: none !important;
+        }
+    </style>
 </head>
-<body>
-<!-- Barra -->
-<header class="navbar">
-    <div class="nav-container">
-        <a href="#" class="nav-brand">
-            <span class="logo">📚</span> Biblioteca Portal de Letras
-        </a>
-        <ul class="nav-menu">
-            <li><a></a></li>
-            <li><a></a></li>
-            <li><a></a></li>
-            <li><a></a></li>
-            <li><a class="nav-link" th:href="@{/index}">Inicio</a></li>
-            <li><a class="nav-link" th:href="@{/registro}">Registro</a></li>
-        </ul>
-    </div>
-</header>
-<!-- Formulario -->
-<main class="login-container">
-    <form class="login-form" id="loginForm" th:action="@{/logC}" method="post" th:object="${usuario}">
-        <div class="login-header">
-            <h2>Iniciar Sesión</h2>
-            <p>Accede a tu biblioteca personal</p>
-        </div>
-        <div class="error-message" id="errorMessage">
-            Credenciales incorrectas. Por favor, verifica tu usuario y contraseña.
-        </div>
-        <div class="success-message" id="successMessage">
-            ¡Bienvenido! Redirigiendo...
-        </div>
-        <div class="form-group">
-            <label for="email">Correo electrónico</label>
-            <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="ejemplo@correo.com"
-                    required>
-        </div>
-        <div class="form-group">
-            <label for="password">Contraseña</label>
-            <div class="password-container">
-                <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Tu contraseña"
-                        required
+<body class="antialiased">
+<!-- Page Container -->
+<div
+        x-data="{
+        darkMode: false,
+        mobileMenu: false,
+        toggleDarkMode() {
+          this.darkMode = ! this.darkMode;
+          if (this.darkMode) {
+            document.body.parentNode.classList.add('dark');
+          } else {
+            document.body.parentNode.classList.remove('dark');
+          }
+        },
+        toggleMobileMenu() {
+          this.mobileMenu = ! this.mobileMenu;
+        }
+      }"
+        class="min-h-dvh min-w-80 bg-white text-zinc-800 dark:bg-zinc-950 dark:text-zinc-100"
+>
+    <!-- Navigation Header -->
+    <header class="flex flex-none items-center justify-between py-7 mx-auto max-w-6xl px-4 lg:px-8">
+        <div class="flex items-center gap-3">
+            <!-- Logo -->
+            <a th:href="@{/index}" class="flex items-center gap-2 text-2xl font-thin tracking-widest hover:text-purple-600 active:opacity-75 dark:hover:text-purple-400">
+                <span class="text-3xl">📚</span>
+                <span class="hidden sm:inline">Portal de Letras</span>
+                <span class="sm:hidden">Biblioteca</span>
+            </a>
+
+            <!-- Toggle Dark Mode -->
+            <button
+                    x-on:click="toggleDarkMode()"
+                    type="button"
+                    class="relative inline-flex size-9 items-center justify-center text-zinc-600 hover:opacity-75 dark:text-zinc-400"
+            >
+                <div
+                        x-cloak
+                        x-show="!darkMode"
+                        x-transition:enter="transition ease-out duration-150"
+                        x-transition:enter-start="opacity-0 rotate-180"
+                        x-transition:enter-end="opacity-100 rotate-0"
+                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave-start="opacity-100 rotate-0"
+                        x-transition:leave-end="opacity-0 rotate-180"
+                        class="absolute inset-0 flex items-center justify-center"
                 >
-                <button type="button" class="show-password" onclick="togglePassword()">
-                    👁️
-                </button>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                    </svg>
+                </div>
+                <div
+                        x-cloak
+                        x-show="darkMode"
+                        x-transition:enter="transition ease-out duration-150"
+                        x-transition:enter-start="opacity-0 rotate-180"
+                        x-transition:enter-end="opacity-100 rotate-0"
+                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave-start="opacity-100 rotate-0"
+                        x-transition:leave-end="opacity-0 rotate-180"
+                        class="absolute inset-0 flex items-center justify-center"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                    </svg>
+                </div>
+            </button>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex items-center gap-6">
+            <nav class="flex items-center gap-6">
+                <a th:href="@{/index}" class="text-sm font-medium decoration-purple-600 decoration-2 underline-offset-8 hover:text-black hover:underline dark:decoration-purple-400 dark:hover:text-white">
+                    Inicio
+                </a>
+                <a th:href="@{/registro}" class="text-sm font-medium decoration-purple-600 decoration-2 underline-offset-8 hover:text-black hover:underline dark:decoration-purple-400 dark:hover:text-white">
+                    Registro
+                </a>
+            </nav>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button
+                x-on:click="toggleMobileMenu()"
+                class="md:hidden relative inline-flex size-9 items-center justify-center text-zinc-600 hover:opacity-75 dark:text-zinc-400"
+        >
+            <svg x-show="!mobileMenu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+            <svg x-show="mobileMenu" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <div x-show="mobileMenu" x-transition class="md:hidden mb-6 mx-auto max-w-6xl px-4 lg:px-8">
+        <div class="rounded-xl bg-zinc-100 p-4 dark:bg-zinc-900">
+            <nav class="flex flex-col space-y-3">
+                <a th:href="@{/index}" class="text-sm font-medium hover:text-purple-600 dark:hover:text-purple-400">Inicio</a>
+                <a th:href="@{/registro}" class="text-sm font-medium hover:text-purple-600 dark:hover:text-purple-400">Registro</a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="mx-auto flex max-w-6xl flex-auto flex-col px-4 pb-4 lg:px-8 lg:pb-8">
+        <div class="flex min-h-[calc(100vh-200px)] items-center justify-center">
+            <!-- Login Form Container -->
+            <div class="relative w-full max-w-md overflow-hidden rounded-xl bg-zinc-100 p-8 dark:bg-zinc-900">
+                <!-- Decorative backgrounds -->
+                <div aria-hidden="true" class="absolute -top-20 -left-20 size-48 rounded-full bg-purple-500 blur-2xl opacity-30"></div>
+                <div aria-hidden="true" class="absolute -top-10 -right-10 size-64 rounded-full bg-blue-300 blur-3xl opacity-20"></div>
+                <div aria-hidden="true" class="absolute inset-0 bg-purple-100/50 backdrop-blur-md dark:bg-purple-900/25"></div>
+
+                <!-- Form Content -->
+                <div class="relative">
+                    <form class="space-y-6" id="loginForm" th:action="@{/logC}" method="post" th:object="${usuario}">
+                        <!-- Header -->
+                        <div class="text-center">
+                            <h2 class="text-3xl font-medium text-black dark:text-white">Iniciar Sesión</h2>
+                            <p class="mt-2 text-lg text-zinc-700 dark:text-zinc-300">Accede a tu biblioteca personal</p>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div class="error-message hidden rounded-xl bg-red-100 p-4 text-red-800 dark:bg-red-900/50 dark:text-red-200" id="errorMessage">
+                            Credenciales incorrectas. Por favor, verifica tu usuario y contraseña.
+                        </div>
+
+                        <!-- Success Message -->
+                        <div class="success-message hidden rounded-xl bg-green-100 p-4 text-green-800 dark:bg-green-900/50 dark:text-green-200" id="successMessage">
+                            ¡Bienvenido! Redirigiendo...
+                        </div>
+
+                        <!-- Email Field -->
+                        <div class="form-group transition-transform duration-200">
+                            <label for="email" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                                Correo electrónico
+                            </label>
+                            <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    placeholder="ejemplo@correo.com"
+                                    required
+                                    class="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder-zinc-500 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-400 dark:focus:border-purple-400"
+                            >
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="form-group transition-transform duration-200">
+                            <label for="password" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                                Contraseña
+                            </label>
+                            <div class="password-container relative">
+                                <input
+                                        type="password"
+                                        id="password"
+                                        name="password"
+                                        placeholder="Tu contraseña"
+                                        required
+                                        class="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 pr-12 text-zinc-900 placeholder-zinc-500 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-400 dark:focus:border-purple-400"
+                                >
+                                <button
+                                        type="button"
+                                        class="show-password absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+                                        onclick="togglePassword()"
+                                >
+                                    👁️
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Remember & Forgot -->
+                        <div class="remember-forgot flex items-center justify-between">
+                            <label class="remember-me flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
+                                <input
+                                        type="checkbox"
+                                        id="remember"
+                                        name="remember"
+                                        class="rounded border-zinc-300 text-purple-600 focus:ring-purple-500 dark:border-zinc-600 dark:bg-zinc-800"
+                                >
+                                Recordarme
+                            </label>
+                            <a href="#" class="forgot-password text-sm text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300">
+                                ¿Olvidaste tu contraseña?
+                            </a>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button
+                                type="submit"
+                                class="login-btn w-full rounded-lg bg-purple-600 px-4 py-3 text-white font-medium hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500/20 active:bg-purple-800 transition-colors duration-200 dark:bg-purple-500 dark:hover:bg-purple-600"
+                        >
+                            Iniciar Sesión
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
-        <div class="remember-forgot">
-            <label class="remember-me">
-                <input type="checkbox" id="remember" name="remember">
-                Recordarme
-            </label>
-            <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+    </main>
+
+    <!-- Footer -->
+    <footer class="flex flex-col gap-6 py-12 text-center text-sm md:flex-row md:justify-between md:gap-0 md:text-left border-t border-zinc-200 dark:border-zinc-800 mx-auto max-w-6xl px-4 lg:px-8">
+        <div class="text-zinc-500 dark:text-zinc-400/80">
+            <span class="font-medium">Portal de Letras</span> ©
+            <span x-text="new Date().getFullYear()"></span>
+            <span> - Todos los derechos reservados</span>
         </div>
-        <button type="submit" class="login-btn">Iniciar Sesión</button>
-    </form>
-</main>
-<footer>
-    <p>© 2025 Biblioteca Portal de Letras - Todos los derechos reservados</p>
-</footer>
-<!-- Scrip de funcionamiento -->
+    </footer>
+</div>
+
+<!-- Script de funcionamiento -->
 <script>
     function togglePassword() {
         const passwordInput = document.getElementById('password');

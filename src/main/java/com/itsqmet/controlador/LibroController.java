@@ -61,7 +61,7 @@ public class LibroController {
 
     //Aqui se puede hacer la extraccion en la base de datos
     //Crear Nuevo Libro
-    @GetMapping("/libros/formularioLibro")
+    @GetMapping("page/formularioLibro")
     public String formularioLibro(Model model){
         model.addAttribute("libro", new Libro());
         //Paso de autores desde el servicio autor a formulario
@@ -112,7 +112,7 @@ public class LibroController {
     }
 
     // Endpoint para leer PDF en línea
-    private final String rutaBase = "C:/Users/User/Documents/librosPdf";
+    private final String rutaBase = "C:\\Users\\ITSQMET ESTUDIANTES\\Desktop\\PROYECTO\\librosPdf";
 
     @GetMapping("/view/{id}")
     @ResponseBody
