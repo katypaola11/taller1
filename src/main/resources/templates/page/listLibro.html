@@ -121,8 +121,8 @@
                     <a th:href="@{/autores}" class="text-sm font-medium decoration-purple-600 decoration-2 underline-offset-8 hover:text-black hover:underline dark:decoration-purple-400 dark:hover:text-white">
                         Autores
                     </a>
-                    <a th:href="@{/registro}" class="text-sm font-medium decoration-purple-600 decoration-2 underline-offset-8 hover:text-black hover:underline dark:decoration-purple-400 dark:hover:text-white">
-                        Registro
+                    <a th:href="@{/libros/estadisticas}" class="text-sm font-medium decoration-purple-600 decoration-2 underline-offset-8 hover:text-black hover:underline dark:decoration-purple-400 dark:hover:text-white">
+                        Ver Estadistica
                     </a>
                     <a th:href="@{/login}" class="text-sm font-medium decoration-purple-600 decoration-2 underline-offset-8 hover:text-black hover:underline dark:decoration-purple-400 dark:hover:text-white">
                         Iniciar Sesión
@@ -149,8 +149,11 @@
             <nav class="flex flex-col space-y-3">
                 <a th:href="@{/index}" class="text-sm font-medium hover:text-purple-600 dark:hover:text-purple-400">Inicio</a>
                 <a th:href="@{/autores}" class="text-sm font-medium hover:text-purple-600 dark:hover:text-purple-400">Autores</a>
-                <a th:href="@{/registro}" class="text-sm font-medium hover:text-purple-600 dark:hover:text-purple-400">Registro</a>
+                <a th:href="@{/libros/estadisticas}" class="text-sm font-medium hover:text-purple-600 dark:hover:text-purple-400">Ver estadisticas</a>
+                <a th:href="@{/catalogo}" class="text-sm font-medium hover:text-purple-600 dark:hover:text-purple-400">Autores</a>
                 <a th:href="@{/login}" class="text-sm font-medium hover:text-purple-600 dark:hover:text-purple-400">Iniciar Sesión</a>
+
+
             </nav>
         </div>
 
@@ -182,7 +185,8 @@
                         </div>
                         <button
                                 type="submit"
-                                class="inline-flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-6 py-3 text-sm font-medium text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500/20 active:bg-purple-800 dark:bg-purple-500 dark:hover:bg-purple-600 dark:active:bg-purple-700"
+                                class="inline-flex items-center justify-center gap-2 rounded-lg bg-pur
+                                ple-600 px-6 py-3 text-sm font-medium text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500/20 active:bg-purple-800 dark:bg-purple-500 dark:hover:bg-purple-600 dark:active:bg-purple-700"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -234,6 +238,7 @@
                                 </div>
                             </div>
 
+
                             <!-- Mobile/Tablet Layout -->
                             <div class="lg:hidden space-y-4">
                                 <div class="flex justify-between items-start">
@@ -251,6 +256,25 @@
                                         <p><span class="font-medium">Idioma:</span> <span th:text="${libro.idioma}"></span></p>
                                         <p><span class="font-medium">Autor:</span> <span th:text="${libro.autor.nombre}"></span></p>
                                     </div>
+
+
+
+
+
+
+
+                                    <th>Descargas</th>
+                                    <td>
+                                        <span class="badge bg-info" th:text="${libro.contadorVisualizaciones}"></span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success" th:text="${libro.contadorDescargas}"></span>
+                                    </td>
+
+
+
+
+
                                 </div>
                                 <div class="flex flex-wrap gap-2">
                                     <a th:href="@{/libros/editarLibro/{id}(id=${libro.id})}" class="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-700">

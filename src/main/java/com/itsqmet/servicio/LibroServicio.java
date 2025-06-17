@@ -58,4 +58,29 @@ public class LibroServicio {
         Optional<Libro> libro = libroRepositorio.findById(id);
         return libro.orElse(null);
     }
+
+
+    public void incrementarContadorVisualizaciones(Long id) {
+        Optional<Libro> libroOpt = libroRepositorio.findById(id);
+        if (libroOpt.isPresent()) {
+            Libro libro = libroOpt.get();
+            Integer contador = libro.getContadorVisualizaciones();
+            libro.setContadorVisualizaciones(contador + 1);
+            libroRepositorio.save(libro);
+        }
+    }
+
+    public void incrementarContadorDescargas(Long id) {
+        Optional<Libro> libroOpt = libroRepositorio.findById(id);
+        if (libroOpt.isPresent()) {
+            Libro libro = libroOpt.get();
+            Integer contador = libro.getContadorDescargas();
+            libro.setContadorDescargas(contador + 1);
+            libroRepositorio.save(libro);
+        }
+    }
+
+    public List<Libro> obtenerTodos() {
+        return libroRepositorio.findAll();
+    }
 }

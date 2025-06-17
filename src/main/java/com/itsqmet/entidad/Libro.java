@@ -22,6 +22,28 @@ public class Libro {
 
     private int paginas;
     private String idioma;
+    @Column(name = "contador_visualizaciones", columnDefinition = "integer default 0")
+    private Integer contadorVisualizaciones = 0;
+
+    @Column(name = "contador_descargas", columnDefinition = "integer default 0")
+    private Integer contadorDescargas = 0;
+
+    // Getters y Setters
+    public Integer getContadorVisualizaciones() {
+        return contadorVisualizaciones != null ? contadorVisualizaciones : 0;
+    }
+
+    public void setContadorVisualizaciones(Integer contadorVisualizaciones) {
+        this.contadorVisualizaciones = contadorVisualizaciones;
+    }
+
+    public Integer getContadorDescargas() {
+        return contadorDescargas != null ? contadorDescargas : 0;
+    }
+
+    public void setContadorDescargas(Integer contadorDescargas) {
+        this.contadorDescargas = contadorDescargas;
+    }
 
     // Nuevo campo para el archivo PDF
     @Column(name = "archivo_pdf")

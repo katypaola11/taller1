@@ -13,18 +13,22 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.StandardCopyOption;
+
+import java.util.HashMap;
+import java.util.Map;
+import org.springframework.http.HttpStatus;
+
 
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.File;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
+
 import java.io.IOException;
 
 
@@ -118,7 +122,7 @@ public class LibroController {
     @ResponseBody
     public ResponseEntity<Resource> verPdf(@PathVariable Long id) {
         // Obtener libro por id, obtener nombre de archivo, etc.
-        String nombreArchivo = "ema.pdf"; // ejemplo estático
+        String nombreArchivo = "donQuijote.pdf"; // ejemplo estático
 
         File archivo = new File(rutaBase, nombreArchivo);
         if (!archivo.exists()) {
@@ -157,6 +161,59 @@ public class LibroController {
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    // Endpoint para obtener estadísticas de un libro específico
+    @GetMapping("/estadisticas/{id}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> obtenerEstadisticasLibro(@PathVariable Long id) {
+        try {
+            Libro libro = libroServicio.obtenerPorId(id);
+            Map<String, Object> estadisticas = new HashMap<>();
+            estadisticas.put("titulo", libro.getTitulo());
+            estadisticas.put("visualizaciones", libro.getContadorVisualizaciones());
+            estadisticas.put("descargas", libro.getContadorDescargas());
+            estadisticas.put("totalInteracciones", libro.getContadorVisualizaciones() + libro.getContadorDescargas());
+
+            return ResponseEntity.ok(estadisticas);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Endpoint para obtener estadísticas generales de todos los libros
+    @GetMapping("/estadisticas/general")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> obtenerEstadisticasGenerales() {
+        try {
+            List<Libro> todosLosLibros = libroServicio.obtenerTodos();
+
+            int totalVisualizaciones = todosLosLibros.stream()
+                    .mapToInt(libro -> libro.getContadorVisualizaciones() != null ? libro.getContadorVisualizaciones() : 0)
+                    .sum();
+
+            int totalDescargas = todosLosLibros.stream()
+                    .mapToInt(libro -> libro.getContadorDescargas() != null ? libro.getContadorDescargas() : 0)
+                    .sum();
+
+            Map<String, Object> estadisticas = new HashMap<>();
+            estadisticas.put("totalVisualizaciones", totalVisualizaciones);
+            estadisticas.put("totalDescargas", totalDescargas);
+            estadisticas.put("totalInteracciones", totalVisualizaciones + totalDescargas);
+            estadisticas.put("totalLibros", todosLosLibros.size());
+
+            return ResponseEntity.ok(estadisticas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    // Endpoint para mostrar página de estadísticas
+    @GetMapping("/estadisticas")
+    public String mostrarEstadisticas(Model model) {
+        List<Libro> libros = libroServicio.obtenerTodos();
+        model.addAttribute("libros", libros);
+        return "page/estadisticas"; // Crear esta vista
     }
 
 

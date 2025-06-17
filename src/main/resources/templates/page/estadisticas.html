@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas de Libros</title>
+
+    <!-- Inter web font from bunny.net (GDPR compliant) -->
+    <link th:href="@{/css/styleEstadisticas.css}">
+    <link rel="preconnect" href="https://fonts.bunny.net" />
+    <link
+            href="https://fonts.bunny.net/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+            rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+
+    <!-- Tailwind CSS v4 Configuration -->
+    <style type="text/tailwindcss">
+        /* Class based dark mode */
+        @custom-variant dark (&:where(.dark, .dark *));
+
+        /* Theme configuration */
+        @theme {
+          /* Fonts */
+          --default-font-family: "Inter";
+        }
+
+        /* Custom animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse-soft {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        .dark .loading-skeleton {
+            background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+            background-size: 200% 100%;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .dark .hover-lift:hover {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .dark .gradient-bg {
+            background: linear-gradient(135deg, #4c1d95 0%, #581c87 50%, #7c3aed 100%);
+        }
+
+        .stats-card {
+            backdrop-filter: blur(16px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+
+    <!-- Alpine.js -->
+    <script
+            defer
+            src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+
+    <!-- Alpine.js (x-cloak) -->
+    <style>
+        [x-cloak] {
+          display: none !important;
+        }
+    </style>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link th:href="@{/css/styleEstadisticas.css}">
+</head>
+<body class="antialiased">
+<!-- Page Container -->
+<div
+        x-data="{
+        darkMode: false,
+        toggleDarkMode() {
+          this.darkMode = ! this.darkMode;
+          if (this.darkMode) {
+            document.body.parentNode.classList.add('dark');
+          } else {
+            document.body.parentNode.classList.remove('dark');
+          }
+        }
+    }"
+        class="min-h-dvh min-w-80 bg-white text-zinc-800 dark:bg-zinc-950 dark:text-zinc-100"
+>
+    <!-- Header con gradiente mejorado -->
+    <div class="relative overflow-hidden">
+        <div class="gradient-bg text-white py-12 mb-8">
+            <!-- Elementos decorativos de fondo -->
+            <div aria-hidden="true" class="absolute -top-20 -left-20 size-48 rounded-full bg-white/10 blur-2xl"></div>
+            <div aria-hidden="true" class="absolute -top-10 -right-10 size-64 rounded-full bg-purple-300/20 blur-3xl"></div>
+            <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm"></div>
+
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between mb-8">
+                    <!-- Logo y título -->
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">📊</span>
+                        <span class="text-2xl font-thin tracking-widest">Portal de Estadísticas</span>
+                    </div>
+
+                    <!-- Toggle Dark Mode -->
+                    <button
+                            x-on:click="toggleDarkMode()"
+                            type="button"
+                            class="relative inline-flex size-9 items-center justify-center text-white/80 hover:text-white hover:scale-110 transition-all duration-200"
+                    >
+                        <div
+                                x-cloak
+                                x-show="!darkMode"
+                                x-transition:enter="transition ease-out duration-150"
+                                x-transition:enter-start="opacity-0 rotate-180"
+                                x-transition:enter-end="opacity-100 rotate-0"
+                                x-transition:leave="transition ease-in duration-100"
+                                x-transition:leave-start="opacity-100 rotate-0"
+                                x-transition:leave-end="opacity-0 rotate-180"
+                                class="absolute inset-0 flex items-center justify-center"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                            </svg>
+                        </div>
+                        <div
+                                x-cloak
+                                x-show="darkMode"
+                                x-transition:enter="transition ease-out duration-150"
+                                x-transition:enter-start="opacity-0 rotate-180"
+                                x-transition:enter-end="opacity-100 rotate-0"
+                                x-transition:leave="transition ease-in duration-100"
+                                x-transition:leave-start="opacity-100 rotate-0"
+                                x-transition:leave-end="opacity-0 rotate-180"
+                                class="absolute inset-0 flex items-center justify-center"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="text-center">
+                    <h1 class="text-4xl lg:text-5xl font-medium text-white mb-4 animate-fadeInUp">
+                        <i class="fas fa-chart-bar mr-3"></i>
+                        Dashboard de Libros
+                    </h1>
+                    <p class="text-xl leading-relaxed text-white/90 animate-fadeInUp" style="animation-delay: 0.2s;">
+                        Análisis completo de estadísticas y rendimiento
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Tarjetas de estadísticas mejoradas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Visualizaciones -->
+            <div class="group relative overflow-hidden rounded-xl bg-zinc-100/80 backdrop-blur-sm p-6 hover-lift animate-fadeInUp dark:bg-zinc-900/80 stats-card" style="animation-delay: 0.1s;">
+                <div aria-hidden="true" class="absolute -top-10 -right-10 size-20 rounded-full bg-blue-500/20 blur-xl"></div>
+                <div class="relative">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <p class="text-zinc-600 dark:text-zinc-400 text-sm font-medium uppercase tracking-wider">Visualizaciones</p>
+                            <p class="text-3xl font-bold text-black dark:text-white mt-2" id="totalVisualizaciones">
+                                <span class="loading-skeleton rounded w-16 h-8 inline-block"></span>
+                            </p>
+                        </div>
+                        <div class="bg-blue-500/20 dark:bg-blue-500/30 p-3 rounded-xl group-hover:scale-110 transition-transform duration-200">
+                            <i class="fas fa-eye text-blue-600 dark:text-blue-400 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-sm text-green-600 dark:text-green-400">
+                        <i class="fas fa-arrow-up mr-1"></i>
+                        <span>12% vs mes anterior</span>
+                    </div>
+                </div>
+                <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600"></div>
+            </div>
+
+            <!-- Total Descargas -->
+            <div class="group relative overflow-hidden rounded-xl bg-zinc-100/80 backdrop-blur-sm p-6 hover-lift animate-fadeInUp dark:bg-zinc-900/80 stats-card" style="animation-delay: 0.2s;">
+                <div aria-hidden="true" class="absolute -top-10 -right-10 size-20 rounded-full bg-green-500/20 blur-xl"></div>
+                <div class="relative">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <p class="text-zinc-600 dark:text-zinc-400 text-sm font-medium uppercase tracking-wider">Descargas</p>
+                            <p class="text-3xl font-bold text-black dark:text-white mt-2" id="totalDescargas">
+                                <span class="loading-skeleton rounded w-16 h-8 inline-block"></span>
+                            </p>
+                        </div>
+                        <div class="bg-green-500/20 dark:bg-green-500/30 p-3 rounded-xl group-hover:scale-110 transition-transform duration-200">
+                            <i class="fas fa-download text-green-600 dark:text-green-400 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-sm text-green-600 dark:text-green-400">
+                        <i class="fas fa-arrow-up mr-1"></i>
+                        <span>8% vs mes anterior</span>
+                    </div>
+                </div>
+                <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-green-500 to-green-600"></div>
+            </div>
+
+            <!-- Total Interacciones -->
+            <div class="group relative overflow-hidden rounded-xl bg-zinc-100/80 backdrop-blur-sm p-6 hover-lift animate-fadeInUp dark:bg-zinc-900/80 stats-card" style="animation-delay: 0.3s;">
+                <div aria-hidden="true" class="absolute -top-10 -right-10 size-20 rounded-full bg-purple-500/20 blur-xl"></div>
+                <div class="relative">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <p class="text-zinc-600 dark:text-zinc-400 text-sm font-medium uppercase tracking-wider">Interacciones</p>
+                            <p class="text-3xl font-bold text-black dark:text-white mt-2" id="totalInteracciones">
+                                <span class="loading-skeleton rounded w-16 h-8 inline-block"></span>
+                            </p>
+                        </div>
+                        <div class="bg-purple-500/20 dark:bg-purple-500/30 p-3 rounded-xl group-hover:scale-110 transition-transform duration-200">
+                            <i class="fas fa-users text-purple-600 dark:text-purple-400 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-sm text-green-600 dark:text-green-400">
+                        <i class="fas fa-arrow-up mr-1"></i>
+                        <span>15% vs mes anterior</span>
+                    </div>
+                </div>
+                <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-purple-500 to-purple-600"></div>
+            </div>
+
+            <!-- Total Libros -->
+            <div class="group relative overflow-hidden rounded-xl bg-zinc-100/80 backdrop-blur-sm p-6 hover-lift animate-fadeInUp dark:bg-zinc-900/80 stats-card" style="animation-delay: 0.4s;">
+                <div aria-hidden="true" class="absolute -top-10 -right-10 size-20 rounded-full bg-orange-500/20 blur-xl"></div>
+                <div class="relative">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <p class="text-zinc-600 dark:text-zinc-400 text-sm font-medium uppercase tracking-wider">Total Libros</p>
+                            <p class="text-3xl font-bold text-black dark:text-white mt-2" id="totalLibros">
+                                <span class="loading-skeleton rounded w-16 h-8 inline-block"></span>
+                            </p>
+                        </div>
+                        <div class="bg-orange-500/20 dark:bg-orange-500/30 p-3 rounded-xl group-hover:scale-110 transition-transform duration-200">
+                            <i class="fas fa-book text-orange-600 dark:text-orange-400 text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-sm text-green-600 dark:text-green-400">
+                        <i class="fas fa-arrow-up mr-1"></i>
+                        <span>5% vs mes anterior</span>
+                    </div>
+                </div>
+                <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-orange-500 to-orange-600"></div>
+            </div>
+        </div>
+
+        <!-- Tabla de libros mejorada -->
+        <div class="relative overflow-hidden rounded-xl bg-zinc-100/80 backdrop-blur-sm dark:bg-zinc-900/80 animate-fadeInUp" style="animation-delay: 0.5s;">
+            <div aria-hidden="true" class="absolute -top-20 -left-20 size-32 rounded-full bg-indigo-500/10 blur-2xl"></div>
+            <div aria-hidden="true" class="absolute -bottom-20 -right-20 size-32 rounded-full bg-purple-500/10 blur-2xl"></div>
+
+            <div class="relative px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/50 backdrop-blur-sm">
+                <h3 class="text-lg font-semibold text-black dark:text-white flex items-center">
+                    <i class="fas fa-table mr-2 text-indigo-600 dark:text-indigo-400"></i>
+                    Detalle por Libro
+                </h3>
+                <p class="text-sm text-zinc-600 dark:text-zinc-400 mt-1">Estadísticas individuales de cada publicación</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800">
+                    <thead class="bg-zinc-50/50 dark:bg-zinc-800/50 backdrop-blur-sm">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-book-open text-indigo-500 dark:text-indigo-400"></i>
+                                <span>Libro</span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-eye text-blue-500 dark:text-blue-400"></i>
+                                <span>Visualizaciones</span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-download text-green-500 dark:text-green-400"></i>
+                                <span>Descargas</span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-chart-line text-purple-500 dark:text-purple-400"></i>
+                                <span>Total</span>
+                            </div>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                            Rendimiento
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody class="bg-white/50 dark:bg-zinc-900/50 backdrop-blur-sm divide-y divide-zinc-200 dark:divide-zinc-800">
+                    <tr th:each="libro, iterStat : ${libros}"
+                        class="hover:bg-zinc-50/70 dark:hover:bg-zinc-800/70 transition-all duration-200 group"
+                        th:style="'animation-delay: ' + ${iterStat.index * 0.1} + 's;'">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10">
+                                    <div class="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                                        <i class="fas fa-book text-white text-sm"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-black dark:text-white" th:text="${libro.titulo}">Título del Libro</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <span class="text-sm font-semibold text-black dark:text-white" th:text="${libro.contadorVisualizaciones}">0</span>
+                                <div class="ml-2 bg-blue-500/20 dark:bg-blue-500/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full text-xs backdrop-blur-sm">
+                                    <i class="fas fa-eye mr-1"></i>vistas
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <span class="text-sm font-semibold text-black dark:text-white" th:text="${libro.contadorDescargas}">0</span>
+                                <div class="ml-2 bg-green-500/20 dark:bg-green-500/30 text-green-700 dark:text-green-300 px-2 py-1 rounded-full text-xs backdrop-blur-sm">
+                                    <i class="fas fa-download mr-1"></i>desc
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-lg font-bold text-indigo-600 dark:text-indigo-400"
+                                  th:text="${libro.contadorVisualizaciones + libro.contadorDescargas}">0</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="w-16 bg-zinc-200 dark:bg-zinc-700 rounded-full h-2 mr-2">
+                                    <div class="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full transition-all duration-300"
+                                         th:style="'width: ' + ${(libro.contadorVisualizaciones + libro.contadorDescargas) * 100 / 100} + '%;'"></div>
+                                </div>
+                                <span class="text-xs text-zinc-600 dark:text-zinc-400">Popular</span>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer informativo mejorado -->
+        <div class="mt-8 text-center text-zinc-500 dark:text-zinc-400 text-sm pb-8">
+            <div class="flex items-center justify-center gap-2">
+                <i class="fas fa-clock text-zinc-400 dark:text-zinc-500"></i>
+                <p>Última actualización: <span id="lastUpdate" class="font-medium">Cargando...</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Función para animar números
+    function animateNumber(element, finalNumber, duration = 1000) {
+        const startNumber = 0;
+        const increment = finalNumber / (duration / 16);
+        let currentNumber = startNumber;
+
+        const timer = setInterval(() => {
+            currentNumber += increment;
+            if (currentNumber >= finalNumber) {
+                element.textContent = finalNumber.toLocaleString();
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.floor(currentNumber).toLocaleString();
+            }
+        }, 16);
+    }
+
+    // Cargar estadísticas generales con animaciones
+    fetch('/libros/estadisticas/general')
+        .then(response => response.json())
+        .then(data => {
+            // Animar los números cuando se cargan
+            setTimeout(() => {
+                animateNumber(document.getElementById('totalVisualizaciones'), data.totalVisualizaciones);
+            }, 500);
+
+            setTimeout(() => {
+                animateNumber(document.getElementById('totalDescargas'), data.totalDescargas);
+            }, 700);
+
+            setTimeout(() => {
+                animateNumber(document.getElementById('totalInteracciones'), data.totalInteracciones);
+            }, 900);
+
+            setTimeout(() => {
+                animateNumber(document.getElementById('totalLibros'), data.totalLibros);
+            }, 1100);
+
+            // Actualizar timestamp
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleString('es-ES');
+        })
+        .catch(error => {
+            console.error('Error cargando estadísticas:', error);
+            // Mostrar valores por defecto en caso de error
+            document.getElementById('totalVisualizaciones').textContent = '--';
+            document.getElementById('totalDescargas').textContent = '--';
+            document.getElementById('totalInteracciones').textContent = '--';
+            document.getElementById('totalLibros').textContent = '--';
+        });
+
+    // Agregar efectos de hover adicionales
+    document.addEventListener('DOMContentLoaded', function() {
+        // Efecto de pulso para las tarjetas al hacer hover
+        const cards = document.querySelectorAll('.hover-lift');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    });
+</script>
+</body>
+</html>
