@@ -1,6 +1,8 @@
 package com.itsqmet.controlador;
 
+import com.itsqmet.entidad.Rol;
 import com.itsqmet.entidad.Usuario;
+import com.itsqmet.servicio.RolServicio;
 import com.itsqmet.servicio.UsuarioServicio;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ usuarioController {
 
     @Autowired
     private UsuarioServicio servicio;
+    @Autowired
+    private RolServicio rolServicio;
 
     //registrar Usuario
     @GetMapping("/registro")
@@ -35,6 +39,8 @@ usuarioController {
     public String mostrarUsuario(Model model){
         List<Usuario> usuarios = servicio.obtenerLista();
         model.addAttribute("usuarios", usuarios);
+        List<Rol> roles=rolServicio.mostrarRoles();
+        model.addAttribute("roles",roles);
         return "pages/lista";
     }
 
@@ -57,6 +63,8 @@ usuarioController {
     @GetMapping("/actualizar/{id}")
     public String actualizarUsuario(@PathVariable Long id, Model model) {
         Optional<Usuario> usuarioOpt = servicio.buscarporId(id);
+        List<Rol> roles=rolServicio.mostrarRoles();
+        model.addAttribute("roles",roles);
         if (usuarioOpt.isPresent()) {
             model.addAttribute("usuario", usuarioOpt.get());
             return "pages/registroUsuario";

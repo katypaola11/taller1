@@ -40,6 +40,11 @@ public class Usuario {
     @Size(min=3, max=15, message = "es obligatorio")
     private String interes;
 
+    @ManyToOne
+    @JoinColumn(name ="id_rol")
+    private Rol rol;
+
+
 }
 
 

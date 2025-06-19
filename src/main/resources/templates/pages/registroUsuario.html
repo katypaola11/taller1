@@ -282,6 +282,14 @@
                         <span th:if="${#fields.hasErrors('interes')}" th:errors="*{interes}" class="text-red-500 text-sm mt-1 block">No puede quedar en blanco</span>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="rol" class="form-label">Rol</label>
+                        <select id="rol" class="form-control" th:field="*{rol.id}">
+                            <option value="" disabled selected>Seleccione un Rol</option>
+                            <option th:each="rol : ${roles}" th:value="${rol.id}" th:text="${rol.nombre}"></option>
+                        </select>
+                    </div>
+
                     <!-- Submit Button -->
                     <div class="pt-4">
                         <button
